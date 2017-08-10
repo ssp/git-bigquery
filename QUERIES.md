@@ -94,6 +94,7 @@ The results show the most frequent files which are found in all commits and show
 
 
 **Rank committers by number of commits to a project**
+*Chance DESC to ASC to get the least active committers*
 
     #SQL Syntax
     SELECT
