@@ -90,4 +90,23 @@ The results show the most frequent files which are found in all commits and show
       repo_name
     ORDER BY
       commits DESC
+    LIMIT 100;
+
+
+**Rank committers by number of commits to a project**
+
+    #SQL Syntax
+    SELECT
+      committer.name,
+      COUNT(*) AS commits
+    FROM
+      `fdc-test-statistic.git.commits`,
+      UNNEST(difference) AS d
+    WHERE
+      repo_name="sql-api"
+    GROUP BY
+      committer.name
+    ORDER BY
+      commits DESC
     LIMIT
+      100;
