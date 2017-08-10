@@ -90,7 +90,7 @@ The results show the most frequent files which are found in all commits and show
       repo_name
     ORDER BY
       commits DESC
-    LIMIT 100;
+      LIMIT 100;
 
 
 **Rank committers by number of commits to a project**
