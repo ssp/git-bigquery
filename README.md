@@ -49,9 +49,15 @@ In order to upload the data to BigQuery, the content needs to be saved temporari
 
 `node get_git_files.js`
 
-Required Arguments:
-  -b argument must be a branch which is searched (TYPE: string (e.g. master))
-  -p argument must lead to a valid git project path (TYPE: path (e.g. ../project/))
+**Required Arguments:** <br>
+  *-b argument* must be a branch which is searched (TYPE: string (e.g. master))
+  *-p argument* must lead to a valid git project path (TYPE: path (e.g. ../project/))
+  <br><br>
+**Advanced Arguments:** <br>
+  *-s argument* used to specify the path for the temporary storage location (TYPE: string (e.g. ../myStore/ )
+   ( If omitted, default path is set to ../GitParsedContent/ )<br>
+  *-c argument* is used to specify a configuration json file. This is handy, when having multiple configurations (TYPE: string (e.g. /path/to/my/config.json )
+    If omitted, the default is in the projects root directory as configuration.json )<br>
 
 Example:
 
@@ -62,7 +68,6 @@ Simply Run:
 
     node uploadFilesToBigQuery.js
 This will upload the contents generated in Step C to BigQuery.
-
 
 ----------
 ## Querying  Your Data ##
