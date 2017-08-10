@@ -93,7 +93,7 @@ The results show the most frequent files which are found in all commits and show
       LIMIT 100;
 
 
-**Rank committers by number of commits to a project**
+**Rank committers by number of commits to a project** <br>
 *Chance DESC to ASC to get the least active committers*
 
     #SQL Syntax
@@ -111,3 +111,18 @@ The results show the most frequent files which are found in all commits and show
       commits DESC
     LIMIT
       100;
+
+**TOP 10 Committers by total number of added lines to project** <br>
+    
+    #SQL Syntax
+    SELECT
+      committer.name,
+      SUM(d.added_lines) AS added_lines
+    FROM
+      `fdc-test-statistic.git.commits`,
+      UNNEST(difference) AS d
+    GROUP BY
+      committer.name
+    ORDER BY
+      added_lines DESC
+    LIMIT
