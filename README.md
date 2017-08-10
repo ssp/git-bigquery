@@ -20,6 +20,7 @@ There are already public GitHub Datasets available on BigQuery and people have i
  - A local git repository
  - Node.js installed
  - Google BigQuery Account
+ - gloud CLI installed and authorized
 
 **Step1**
 Download this project and go into the folder and run:
