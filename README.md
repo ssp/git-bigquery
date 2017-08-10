@@ -50,7 +50,7 @@ In order to upload the data to BigQuery, the content needs to be saved temporari
 `node get_git_files.js`
 
 **Required Arguments:** <br>
-  *-b argument* must be a branch which is searched (TYPE: string (e.g. master))
+  *-b argument* must be a branch which is searched (TYPE: string (e.g. master))<br>
   *-p argument* must lead to a valid git project path (TYPE: path (e.g. ../project/))
   <br><br>
 **Advanced Arguments:** <br>
