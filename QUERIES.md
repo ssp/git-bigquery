@@ -130,6 +130,7 @@ The results show the most frequent files which are found in all commits and show
 **Get most Complex Code by maximum indent depth** <br>
 *This Query utilizes User Defined Functions in Javascript. Deeply nested code with high indents is likely to be rather complex code.*
 
+      #SQL SYNTAX
       CREATE TEMPORARY FUNCTION
       getComplexity(code STRING)
       RETURNS INT64
