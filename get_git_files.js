@@ -7,11 +7,9 @@ INFO:
 
 
 node get_git_files.js -b master -p ../sql-api/  -c ../GitUploadRepo/
-
-                                              ^^^optional parameter -c ^^^
 */
 
-
+console.log("[Google-BigQuery] Preparing Git Files for Upload");
 //Import
 const Git = require("nodegit");
 const path = require('path');
@@ -50,7 +48,7 @@ const options = commandLineArgs(optionDefinitions);
 //CLI Inputs
 const branch = options.branch;
 const repoDir = options.path;
-
+const configFile = options.config;
 
 if (options.store === undefined) {
   var contentPath_link = require("path").resolve("../GitParsedContent/");
@@ -77,15 +75,17 @@ if (contentPath_link == undefined) {
   console.error("[INFO] Expecting path to folder where Content gets stored in.");
   process.exit(1);
 }
+var configPath;
+
 if (configFile == undefined) {
-  const configPath = 'configuration.json';
+  configPath = 'configuration.json';
 }
 else {
-  const configPath = options.config;
+  configPath = options.config;
 }
 
 //Load Config File
-const globalConfig = JSON.parse(fs.readFileSync(configPath));
+const globalConfig = JSON.parse(fs.readFileSync(require("path").resolve(configPath)));
 
 
 //Resolve Branch Input Path to Absolute Path
@@ -94,7 +94,6 @@ var pathToRepo = require("path").resolve(repoDir);
 //Get Repo Name -> This is done by getting the specified folder name of the repo path
 var repoName = pathToRepo.substr(pathToRepo.lastIndexOf("/") + 1, pathToRepo.length);
 
-console.log("contentPATH: " + contentPath_link);
 fs.writeFileSync(contentPath_link + '/commits_bigquery-format.json', '');
 fs.writeFileSync(contentPath_link + '/diffs_bigquery-format.json', '');
 fs.writeFileSync(contentPath_link + '/files_bigquery-format.json', '');
@@ -187,7 +186,6 @@ function stream_git_data(streamConfig) {
             const headOID = String(reference.target());
             const currenTime = Math.round(new Date().getTime()/1000);
 
-            console.log("bla")
             const headObject = {
               "ref": headOID,
               "name": headName,
@@ -196,6 +194,7 @@ function stream_git_data(streamConfig) {
             }
 
             fs.writeFileSync(contentPath_link + '/refs_bigquery-format.json', JSON.stringify(headObject));
+            console.log("[Good] Wrote current branch info to File");
         });
       }
 
@@ -212,6 +211,7 @@ function stream_git_data(streamConfig) {
 
           //If current commit exists in BigQuery, it is imediatly skipped
           if (existingHashes_commits.indexOf(String(commit.id())) != -1) {
+            console.log("[INFO] Commit was found in BigQuery. Skipping to avoid duplication.")
             return;
           };
 
@@ -220,26 +220,25 @@ function stream_git_data(streamConfig) {
           //Functions to add to the File Stream
           function streamCommits(commit_diff) {
             streamConfig.commit_stream.write(JSON.stringify(buildCommitObject(commit, commit_diff)) + os.EOL);
+            console.log("[Good] Streaming commits to File");
           }
 
           function streamDiffs(diff_contents) {
             streamConfig.diff_stream.write(JSON.stringify(diff_contents) + os.EOL);
+            console.log("[Good] Streaming contents to File");
           }
 
           //Diffs are generated in this function
           function getDiffs(commit_parameter) {
 
-            console.log("getDiffs");
             commit_parameter.getDiff()
               .then(function(arrayDiff) {
-                console.log("diffs");
                 var diffPromises = arrayDiff.map(diff => diff.patches().then(function(arrayConvenientPatch) {
-                  console.log("patches");
+
                   var patchPromises = arrayConvenientPatch.map(patch => patch.hunks().then(function(hunks) {
-                    console.log("hunks");
+
 
                     var hunkPromises = hunks.map(hunk => hunk.lines().then(function(lines) {
-                      console.log("lines");
 
 
                       //Variables required for Object Building
@@ -316,12 +315,12 @@ function stream_git_data(streamConfig) {
             treeEmitter.on('entry', function(treeEntry) {
 
 
-              console.log(treeEntry.path());
+
               //BLOB LEVEL
               if (treeEntry.isFile()) {
                 //The Blob is retrieved at this point (Actual File Content)
                 treeEntry.getBlob().then(function(blob) {
-                  console.log("BINARY: " + String(blob.isBinary()));
+
                   if (blob.isBinary()) {
                     //Binary Files are skipped and never uploaded to BigQuery DB
                     return;
@@ -371,10 +370,11 @@ function stream_git_data(streamConfig) {
 
                     //Write Object into File New Line and don't store in MEMORY
                     streamConfig.file_stream.write(JSON.stringify(fileObject) + os.EOL);
+                    console.log("[Good] Streamed File information to File");
 
                     //Write Object into File New Line and don't store in MEMORY
                     streamConfig.content_stream.write(JSON.stringify(contentObject) + os.EOL);
-
+                    console.log("[Good] Streamed Content information to File");
                     return;
 
                   }
@@ -391,7 +391,7 @@ function stream_git_data(streamConfig) {
 
 
             treeEmitter.on('end', function(trees) {
-
+              console.log("[Good] Got Commit Tree Successfully");
             });
 
             treeEmitter.start();
@@ -453,7 +453,7 @@ function getExisting() {
           existingHashes_files.push(row.id);
         })
         .on('end', function() {
-
+          console.log("[Good] Checked BigQuery for existing contents to avoid duplicates");
           // Run main Function, once the existing Hashes are retrieved => This is done to avoid duplicate entries in the BigQuery Tables
           stream_git_data(streamConfig);
         });

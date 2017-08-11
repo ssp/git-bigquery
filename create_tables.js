@@ -1,7 +1,32 @@
-const BigQuery = require('@google-cloud/bigquery');
+console.log("[Google-BigQuery] Creating Tables");
 
+const BigQuery = require('@google-cloud/bigquery');
 var fs = require('fs');
-const globalConfig = JSON.parse(fs.readFileSync('configuration.json'));
+const commandLineArgs = require('command-line-args');
+
+//Passed Arguments via commandLineArgs
+const optionDefinitions = [
+  {
+    name: 'config',
+    alias: 'c',
+    type: String
+  }
+];
+const options = commandLineArgs(optionDefinitions);
+const configFile = options.config;
+
+var configPath;
+
+if (configFile == undefined) {
+  configPath = 'configuration.json';
+}
+else {
+  configPath = options.config;
+}
+
+//Load Config File
+const globalConfig = JSON.parse(fs.readFileSync(require("path").resolve(configPath)));
+
 
 const projectId = globalConfig.project_id;
 
@@ -234,23 +259,23 @@ var refTable_options = {
 
 
 
-console.log("Creating the TABLES...");
+console.log("[Good] Creating the TABLES...");
 dataset.createTable(commitsTable, commitsTable_options, function(err, table, apiResponse) {
-  console.log("COMMITS TABLE WAS CREATED.");
+  console.log("[Good] COMMITS TABLE WAS CREATED.");
 });
 
 dataset.createTable(filesTable, filesTable_options, function(err, table, apiResponse) {
-  console.log("FILES TABLE WAS CREATED.");
+  console.log("[Good] FILES TABLE WAS CREATED.");
 });
 
 dataset.createTable(contentsTable, contentsTable_options, function(err, table, apiResponse) {
-  console.log("CONTENTS TABLE WAS CREATED.");
+  console.log("[Good] CONTENTS TABLE WAS CREATED.");
 });
 
 dataset.createTable(diffTable, diffTable_options, function(err, table, apiResponse) {
-  console.log("DIFF TABLE WAS CREATED.");
+  console.log("[Good] DIFF TABLE WAS CREATED.");
 });
 
 dataset.createTable(refTable, refTable_options, function(err, table, apiResponse) {
-  console.log("REFS TABLE WAS CREATED.");
+  console.log("[Good] REFS TABLE WAS CREATED.");
 });

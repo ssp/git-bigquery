@@ -1,10 +1,33 @@
+console.log("[Google-BigQuery] Uploading Content to BigQuery");
 //Imports
 const fs = require('fs');
 const util = require('util');
+const commandLineArgs = require('command-line-args');
+
+//Passed Arguments via commandLineArgs
+const optionDefinitions = [
+  {
+    name: 'config',
+    alias: 'c',
+    type: String
+  }
+];
+const options = commandLineArgs(optionDefinitions);
+const configFile = options.config;
+
+var configPath;
+
+if (configFile == undefined) {
+  configPath = 'configuration.json';
+}
+else {
+  configPath = options.config;
+}
+
+//Load Config File
+const globalConfig = JSON.parse(fs.readFileSync(require("path").resolve(configPath)));
 
 const BigQuery = require('@google-cloud/bigquery');
-
-const globalConfig = JSON.parse(fs.readFileSync('configuration.json'));
 
 const projectId = globalConfig.project_id;
 
@@ -37,10 +60,8 @@ function launchStreams() {
       });
 
       job.on('complete', function(metadata) {
-        console.log(util.inspect(metadata, false, null));
-        console.log("=======================================");
-        console.log("[Awesome: Commits] Uploaded Commits to Database");
-        console.log("=======================================");
+        // console.log(util.inspect(metadata, false, null));
+        console.log("[Good] Uploaded Commits to Database");
       });
     });
 
@@ -55,10 +76,8 @@ function launchStreams() {
       });
 
       job.on('complete', function(metadata) {
-        console.log(util.inspect(metadata, false, null));
-        console.log("=======================================");
-        console.log("[Awesome: Diffs] Uploaded Diffs to Database");
-        console.log("=======================================");
+        // console.log(util.inspect(metadata, false, null));
+        console.log("[Good] Uploaded Diffs to Database");
       });
     });
 
@@ -74,10 +93,8 @@ function launchStreams() {
       });
 
       job.on('complete', function(metadata) {
-        console.log(util.inspect(metadata, false, null));
-        console.log("=======================================");
-        console.log("[Awesome: Files] Uploaded Files to Database");
-        console.log("=======================================");
+        // console.log(util.inspect(metadata, false, null));
+        console.log("[Good] Uploaded Files to Database");
       });
     });
 
@@ -93,10 +110,8 @@ function launchStreams() {
       });
 
       job.on('complete', function(metadata) {
-        console.log(util.inspect(metadata, false, null));
-        console.log("=======================================");
-        console.log("[Awesome: Contents] Uploaded contents to Database");
-        console.log("=======================================");
+        // console.log(util.inspect(metadata, false, null));
+        console.log("[Good] Uploaded contents to Database");
       });
     });
 
@@ -112,10 +127,8 @@ function launchStreams() {
       });
 
       job.on('complete', function(metadata) {
-        console.log(util.inspect(metadata, false, null));
-        console.log("=======================================");
-        console.log("[Awesome: Refs] Uploaded Refs to Database");
-        console.log("=======================================");
+        // console.log(util.inspect(metadata, false, null));
+        console.log("[Good] Uploaded Refs to Database");
       });
     });
 

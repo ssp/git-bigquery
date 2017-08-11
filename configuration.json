@@ -1,5 +1,5 @@
 {
   "project_id": "fdc-test-statistic",
-  "dataset": "git",
+  "dataset": "hackertalk",
   "temporary_storage_path": "../GitParsedContent/"
 }
