@@ -126,3 +126,34 @@ The results show the most frequent files which are found in all commits and show
     ORDER BY
       added_lines DESC
     LIMIT 10;
+
+**Get most Complex Code by maximum indent depth** <br>
+*This Query utilizes User Defined Functions in Javascript. Deeply nested code with high indents is likely to be rather complex code.*
+
+      CREATE TEMPORARY FUNCTION
+      getComplexity(code STRING)
+      RETURNS INT64
+      LANGUAGE js AS """
+        var maximum_indent = 0;
+
+        for (var i = 0; i < 500; i++) {
+          var matches = code.match(new RegExp(" {" + String(i) + "}", "g"));
+          if (matches == undefined || matches == null) {
+            break;
+          } else {
+            maximum_indent = i;
+          }
+        }
+        return maximum_indent;
+    """;
+    SELECT
+      path,
+      repo_name,
+      getComplexity(content) AS complexity,
+      content
+    FROM
+      `fdc-test-statistic.git.contents`
+    ORDER BY
+      complexity DESC
+    LIMIT
+      100;
