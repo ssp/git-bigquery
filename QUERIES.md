@@ -125,4 +125,4 @@ The results show the most frequent files which are found in all commits and show
       committer.name
     ORDER BY
       added_lines DESC
-    LIMIT 100;
+    LIMIT 10;
