@@ -90,4 +90,71 @@ The results show the most frequent files which are found in all commits and show
       repo_name
     ORDER BY
       commits DESC
+      LIMIT 100;
+
+
+**Rank committers by number of commits to a project** <br>
+*Chance DESC to ASC to get the least active committers*
+
+    #SQL Syntax
+    SELECT
+      committer.name,
+      COUNT(*) AS commits
+    FROM
+      `fdc-test-statistic.git.commits`,
+      UNNEST(difference) AS d
+    WHERE
+      repo_name="sql-api"
+    GROUP BY
+      committer.name
+    ORDER BY
+      commits DESC
     LIMIT
+      100;
+
+**TOP 10 Committers by total number of added lines to project** <br>
+    
+    #SQL Syntax
+    SELECT
+      committer.name,
+      SUM(d.added_lines) AS added_lines
+    FROM
+      `fdc-test-statistic.git.commits`,
+      UNNEST(difference) AS d
+    GROUP BY
+      committer.name
+    ORDER BY
+      added_lines DESC
+    LIMIT 10;
+
+**Get most Complex Code by maximum indent depth** <br>
+*This Query utilizes User Defined Functions in Javascript. Deeply nested code with high indents is likely to be rather complex code.*
+
+      #SQL SYNTAX
+      CREATE TEMPORARY FUNCTION
+      getComplexity(code STRING)
+      RETURNS INT64
+      LANGUAGE js AS """
+        var maximum_indent = 0;
+
+        for (var i = 0; i < 500; i++) {
+          var matches = code.match(new RegExp(" {" + String(i) + "}", "g"));
+          if (matches == undefined || matches == null) {
+            break;
+          } else {
+            maximum_indent = i;
+          }
+        }
+        return maximum_indent;
+    """;
+    SELECT
+      path,
+      repo_name,
+      getComplexity(content) AS complexity,
+      content
+    FROM
+      `fdc-test-statistic.git.contents`
+    ORDER BY
+      complexity DESC
+    LIMIT
+      100;

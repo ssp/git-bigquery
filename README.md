@@ -20,6 +20,7 @@ There are already public GitHub Datasets available on BigQuery and people have i
  - A local git repository
  - Node.js installed
  - Google BigQuery Account
+ - gloud CLI installed and authorized
 
 **Configuration(Important)**
 <br>
@@ -52,9 +53,15 @@ In order to upload the data to BigQuery, the content needs to be saved temporari
 
 `node get_git_files.js`
 
-Required Arguments:
-  -b argument must be a branch which is searched (TYPE: string (e.g. master))
-  -p argument must lead to a valid git project path (TYPE: path (e.g. ../project/))
+**Required Arguments:** <br>
+  *-b argument* must be a branch which is searched (TYPE: string (e.g. master))<br>
+  *-p argument* must lead to a valid git project path (TYPE: path (e.g. ../project/))
+  <br><br>
+**Advanced Arguments:** <br>
+  *-s argument* used to specify the path for the temporary storage location (TYPE: string (e.g. ../myStore/ )
+   ( If omitted, default path is set to ../GitParsedContent/ )<br>
+  *-c argument* is used to specify a configuration json file. This is handy, when having multiple configurations (TYPE: string (e.g. /path/to/my/config.json )
+    If omitted, the default is in the projects root directory as configuration.json )<br>
 
 Example:
 
@@ -65,7 +72,6 @@ Simply Run:
 
     node uploadFilesToBigQuery.js
 This will upload the contents generated in Step C to BigQuery.
-
 
 ----------
 ## Querying  Your Data ##
@@ -131,16 +137,10 @@ As mentioned above, you can most likely use any query about the public GitHub da
     FROM [your-files]
     WHERE RIGHT(path, 3) = ‘.go’
 
-<<<<<<< HEAD
 
-
-[**VIEW ALL QUERIES**](blba)
-------------------------
-
-=======
 [**VIEW ALL QUERIES**](https://github.com/freiheit-com/git-bigquery/blob/master/QUERIES.md)
 ------------------------
->>>>>>> a27db5468f1ba3a2a56cf3664b2afc4267e9afac
+
 *Have you written more interesting queries? - Create a Pull request and we would love to add them here.*
 
 These Queries are copied from [This Medium Post from Francesc Campoy](https://medium.com/google-cloud/analyzing-go-code-with-bigquery-485c70c3b451) and from [This Gist by arfon](https://gist.github.com/arfon/49ca314a5b0a00b1ebf91167db3ff02c). Check these links out for more information. Also check out [This Post by Felipe Hoffa](https://medium.com/google-cloud/github-on-bigquery-analyze-all-the-code-b3576fd2b150) for more info.
