@@ -158,3 +158,45 @@ The results show the most frequent files which are found in all commits and show
       complexity DESC
     LIMIT
       100;
+
+**Reloaded: Get most Complex Code by maximum indent depth** <br>
+*Alternative complexity function hack.*
+
+CREATE TEMPORARY FUNCTION getComplexity(lines ARRAY<STRING>, tab_indent INT64, space_indent INT64) RETURNS INT64
+LANGUAGE js AS """  
+    var tabs = 0;
+    var spaces = 0;
+    for (var i=0; i < lines.length; i++) {
+      var line = "" + lines[i];
+      if (line.trim().length === 0) {
+        continue;
+      }
+      
+      for (var j=0; j < line.length; j++) {
+        var c = line.charAt(j);
+        if (c !== ' ' && c !== '\t') {
+          break;
+        }
+        if (c === ' ') {
+          spaces++;
+          continue;
+        }
+        if (c === '\t') {
+          tabs++;
+        }
+      }
+      
+    }
+    return (tabs/tab_indent) + (spaces/space_indent);
+""";
+SELECT
+  path,
+  repo_name,
+  getComplexity(SPLIT(content, "\n"), 4, 4) AS complexity,
+  content
+FROM
+  `fdc-test-statistic.git.contents`
+ORDER BY
+  complexity DESC
+LIMIT
+  100;
